@@ -1,0 +1,24 @@
+# Windows
+Thumbs.db
+
+# Mac
+.DS_Store
+
+# Unity
+Library
+Temp
+Logs
+UserSettings
+*.unitypackage
+*-CSharp*.csproj
+
+# Xamarin
+obj
+*.userprefs
+test-results
+
+# Rider
+.idea/
+
+# Custom
+
