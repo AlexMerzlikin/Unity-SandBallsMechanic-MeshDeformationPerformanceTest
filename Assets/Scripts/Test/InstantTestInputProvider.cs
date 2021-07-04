@@ -11,7 +11,7 @@ namespace Test
         private readonly Vector3 _startPosition = new Vector3(950, 1000, 0);
         private readonly Vector3 _endPosition = new Vector3(950, -20, 0);
         private readonly int _stepsAmount = 30;
-        private readonly int _skipFramesOnStart = 150;
+        private readonly int _skipFramesOnStart = 90;
 
         private int _skippedFramesCount;
         private Vector3 _step;
