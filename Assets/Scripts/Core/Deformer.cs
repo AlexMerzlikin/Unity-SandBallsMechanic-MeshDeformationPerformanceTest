@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Core
 {
     [RequireComponent(typeof(Camera))]
-    public class Deformator : MonoBehaviour
+    public class Deformer : MonoBehaviour
     {
         [SerializeField] private float _planeDistance;
         [SerializeField] private DeformablePlane _deformablePlane;

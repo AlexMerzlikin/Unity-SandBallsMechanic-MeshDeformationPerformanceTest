@@ -5,9 +5,6 @@ namespace Core
     [RequireComponent(typeof(MeshFilter), typeof(MeshCollider))]
     public class DeformableMeshPlane : DeformablePlane
     {
-        [SerializeField] private float _radiusOfDeformation;
-        [SerializeField] private float _powerOfDeformation;
-
         private Mesh _mesh;
         private MeshCollider _collider;
         private Vector3[] _vertices;

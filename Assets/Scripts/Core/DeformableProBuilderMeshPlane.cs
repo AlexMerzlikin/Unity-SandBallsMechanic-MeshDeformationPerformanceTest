@@ -7,9 +7,6 @@ namespace Core
     [RequireComponent(typeof(ProBuilderMesh))]
     public class DeformableProBuilderMeshPlane : DeformablePlane
     {
-        [SerializeField] private float _radiusOfDeformation;
-        [SerializeField] private float _powerOfDeformation;
-
         private ProBuilderMesh _mesh;
         private Vector3[] _vertices;
 
