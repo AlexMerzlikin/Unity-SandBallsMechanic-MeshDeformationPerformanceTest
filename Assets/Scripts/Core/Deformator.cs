@@ -9,13 +9,15 @@ namespace Core
     {
         [SerializeField] private float _planeDistance;
         [SerializeField] private DeformablePlane _deformablePlane;
+        [SerializeField] private InputProviderType _inputProviderType;
 
         private Camera _camera;
-        private readonly IInputProvider _inputProvider = new InstantTestInputProvider();
+        private IInputProvider _inputProvider;
 
         private void Awake()
         {
             _camera = transform.GetComponent<Camera>();
+            _inputProvider = new InputProviderFactory().Create(_inputProviderType);
             _inputProvider.InputReceived += OnInputReceived;
         }
 

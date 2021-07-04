@@ -8,6 +8,7 @@ Thumbs.db
 Library
 Temp
 Logs
+Profiler
 UserSettings
 *.unitypackage
 *-CSharp*.csproj
