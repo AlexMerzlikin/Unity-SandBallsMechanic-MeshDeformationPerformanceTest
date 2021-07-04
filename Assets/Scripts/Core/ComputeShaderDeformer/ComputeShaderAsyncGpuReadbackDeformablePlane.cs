@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -6,39 +8,32 @@ namespace Core.ComputeShaderDeformer
 {
     public class ComputeShaderAsyncGpuReadbackDeformablePlane : DeformablePlane
     {
-        public ComputeShader computeShader;
-        public MeshFilter mf;
-        public MeshCollider mc;
-
-        [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
-        struct VertexData
+        [StructLayout(LayoutKind.Sequential)]
+        private struct VertexData
         {
             public Vector3 pos;
             public Vector3 nor;
             public Vector2 uv;
         }
 
-        private Mesh mesh;
-        private ComputeBuffer cBuffer;
-        private int _kernel;
-        private int dispatchCount = 0;
-        private NativeArray<VertexData> vertData;
-        private AsyncGPUReadbackRequest request;
-        private bool _isDispatched;
+        [SerializeField] private ComputeShader _computeShader;
 
+        private Mesh _mesh;
+        private ComputeBuffer _computeBuffer;
+        private int _kernel;
+        private int _dispatchCount;
+        private NativeArray<VertexData> _vertexData;
+        private AsyncGPUReadbackRequest _request;
+        private bool _isDispatched;
+        private MeshCollider _meshCollider;
+        private readonly List<Vector4> _deformationPoints = new List<Vector4>(30);
+        private readonly int _deformationPointsPropertyId = Shader.PropertyToID("_DeformPositions");
+        private readonly int _deformationPointsCountPropertyId = Shader.PropertyToID("_DeformPositionsCount");
+        
         public override void Deform(Vector3 positionToDeform)
         {
             var point = transform.InverseTransformPoint(positionToDeform);
-            computeShader.SetFloats("_DeformPosition", point.x, point.y, point.z);
-            computeShader.Dispatch(_kernel, dispatchCount, 1, 1);
-
-            if (_isDispatched)
-            {
-                return;
-            }
-            
-            _isDispatched = true;
-            request = AsyncGPUReadback.Request(cBuffer);
+            _deformationPoints.Add(point);
         }
 
         private void Awake()
@@ -50,81 +45,125 @@ namespace Core.ComputeShaderDeformer
             }
 
             var meshFilter = GetComponent<MeshFilter>();
-            mc = GetComponent<MeshCollider>();
-            mesh = meshFilter.mesh;
+            _meshCollider = GetComponent<MeshCollider>();
+            _mesh = meshFilter.mesh;
 
-            _kernel = computeShader.FindKernel("CSMain");
-            uint threadX = 0;
-            uint threadY = 0;
-            uint threadZ = 0;
-            computeShader.GetKernelThreadGroupSizes(_kernel, out threadX, out threadY, out threadZ);
-            dispatchCount = Mathf.CeilToInt(mesh.vertexCount / threadX + 1);
-
-            vertData = new NativeArray<VertexData>(mesh.vertexCount, Allocator.Temp);
-            for (int i = 0; i < mesh.vertexCount; ++i)
-            {
-                VertexData v = new VertexData();
-                v.pos = mesh.vertices[i];
-                v.nor = mesh.normals[i];
-                v.uv = mesh.uv[i];
-                vertData[i] = v;
-            }
-
-            var layout = new[]
-            {
-                new VertexAttributeDescriptor(VertexAttribute.Position,
-                    mesh.GetVertexAttributeFormat(VertexAttribute.Position), 3),
-                new VertexAttributeDescriptor(VertexAttribute.Normal,
-                    mesh.GetVertexAttributeFormat(VertexAttribute.Normal), 3),
-                new VertexAttributeDescriptor(VertexAttribute.TexCoord0,
-                    mesh.GetVertexAttributeFormat(VertexAttribute.TexCoord0), 2),
-            };
-            mesh.SetVertexBufferParams(mesh.vertexCount, layout);
-
-            cBuffer = new ComputeBuffer(mesh.vertexCount, 8 * 4); // 3*4bytes = sizeof(Vector3)
-            if (vertData.IsCreated)
-            {
-                cBuffer.SetData(vertData);
-            }
-
-            computeShader.SetBuffer(_kernel, "vertexBuffer", cBuffer);
-            computeShader.SetFloat("_Force", _powerOfDeformation);
-            computeShader.SetFloat("_Radius", _radiusOfDeformation);
+            SetKernel();
+            CreateVertexData();
+            SetMeshVertexBufferParams();
+            _computeBuffer = CreateComputeBuffer();
+            SetComputeShaderValues();
         }
 
         private void Update()
         {
-            //run the compute shader, the position of particles will be updated in GPU
-            if (_isDispatched && request.done && !request.hasError)
+            Dispatch();
+        }
+
+        private void LateUpdate()
+        {
+            GatherResult();
+        }
+        
+        private void SetKernel()
+        {
+            _kernel = _computeShader.FindKernel("CSMain");
+            _computeShader.GetKernelThreadGroupSizes(_kernel, out var threadX, out _, out _);
+            _dispatchCount = Mathf.CeilToInt(_mesh.vertexCount / threadX + 1);
+        }
+
+        private void CreateVertexData()
+        {
+            _vertexData = new NativeArray<VertexData>(_mesh.vertexCount, Allocator.Temp);
+            for (var i = 0; i < _mesh.vertexCount; ++i)
             {
-                _isDispatched = false;
-                //Readback and show result on texture
-                vertData = request.GetData<VertexData>();
-
-                //Update mesh
-                mesh.MarkDynamic();
-                mesh.SetVertexBufferData(vertData, 0, 0, vertData.Length);
-                // mesh.RecalculateNormals();
-
-                //Update to collider
-                mc.sharedMesh = mesh;
-
-                //Request AsyncReadback again
-                request = AsyncGPUReadback.Request(cBuffer);
+                var v = new VertexData
+                {
+                    pos = _mesh.vertices[i],
+                    nor = _mesh.normals[i],
+                    uv = _mesh.uv[i]
+                };
+                _vertexData[i] = v;
             }
         }
 
+        private void SetMeshVertexBufferParams()
+        {
+            var layout = new[]
+            {
+                new VertexAttributeDescriptor(VertexAttribute.Position,
+                    _mesh.GetVertexAttributeFormat(VertexAttribute.Position), 3),
+                new VertexAttributeDescriptor(VertexAttribute.Normal,
+                    _mesh.GetVertexAttributeFormat(VertexAttribute.Normal), 3),
+                new VertexAttributeDescriptor(VertexAttribute.TexCoord0,
+                    _mesh.GetVertexAttributeFormat(VertexAttribute.TexCoord0), 2),
+            };
+            _mesh.SetVertexBufferParams(_mesh.vertexCount, layout);
+        }
+
+        private void SetComputeShaderValues()
+        {
+            _computeShader.SetBuffer(_kernel, "vertexBuffer", _computeBuffer);
+            _computeShader.SetFloat("_Force", _powerOfDeformation);
+            _computeShader.SetFloat("_Radius", _radiusOfDeformation);
+        }
+
+        private ComputeBuffer CreateComputeBuffer()
+        {
+            var computeBuffer = new ComputeBuffer(_mesh.vertexCount, 32);
+            if (_vertexData.IsCreated)
+            {
+                computeBuffer.SetData(_vertexData);
+            }
+
+            return computeBuffer;
+        }
+
+        private void Dispatch()
+        {
+            if (_deformationPoints.Count == 0)
+            {
+                return;
+            }
+
+            _computeShader.SetVectorArray(_deformationPointsPropertyId, _deformationPoints.ToArray());
+            _computeShader.SetInt(_deformationPointsCountPropertyId, _deformationPoints.Count);
+            _computeShader.Dispatch(_kernel, _dispatchCount, 1, 1);
+            _deformationPoints.Clear();
+
+            if (_isDispatched)
+            {
+                return;
+            }
+
+            _isDispatched = true;
+            _request = AsyncGPUReadback.Request(_computeBuffer);
+        }
+
+        private void GatherResult()
+        {
+            if (!_isDispatched || !_request.done || _request.hasError)
+            {
+                return;
+            }
+
+            _isDispatched = false;
+            _vertexData = _request.GetData<VertexData>();
+
+            _mesh.MarkDynamic();
+            _mesh.SetVertexBufferData(_vertexData, 0, 0, _vertexData.Length);
+            _meshCollider.sharedMesh = _mesh;
+
+            _request = AsyncGPUReadback.Request(_computeBuffer);
+        }
+
+
         private void CleanUp()
         {
-            cBuffer?.Release();
+            _computeBuffer?.Release();
         }
 
-        void OnDisable()
-        {
-            CleanUp();
-        }
-
-        void OnDestroy()
+        private void OnDestroy()
         {
             CleanUp();
         }

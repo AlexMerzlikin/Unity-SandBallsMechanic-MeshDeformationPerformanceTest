@@ -1,6 +1,4 @@
-// Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel CSMain
-
 
 struct VertexData
 {
@@ -12,6 +10,8 @@ struct VertexData
 RWStructuredBuffer<VertexData> vertexBuffer;
 
 float3 _DeformPosition;
+float3 _DeformPositions[30];
+int _DeformPositionsCount;
 float _Radius;
 float _Force;
 
@@ -20,10 +20,13 @@ void CSMain(uint3 id : SV_DispatchThreadID)
 {
     float3 pos = vertexBuffer[id.x].pos;
 
-    const float distance = length(pos - _DeformPosition);
-    if(distance < _Radius)
+    for (int i = 0; i < _DeformPositionsCount; i++)
     {
-        pos.y += _Force;
+        const float distance = length(pos - _DeformPositions[i]);
+        if(distance < _Radius)
+        {
+            pos.y -= _Force;
+        }
     }
     
     vertexBuffer[id.x].pos.y = pos.y;
