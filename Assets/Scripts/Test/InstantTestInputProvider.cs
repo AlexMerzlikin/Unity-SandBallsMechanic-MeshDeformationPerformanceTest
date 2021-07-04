@@ -11,10 +11,12 @@ namespace Test
         private readonly Vector3 _startPosition = new Vector3(950, 1000, 0);
         private readonly Vector3 _endPosition = new Vector3(950, -20, 0);
         private readonly int _stepsAmount = 30;
+        private readonly int _skipFramesOnStart = 150;
 
+        private int _skippedFramesCount;
         private Vector3 _step;
         private int _stepsCount;
-        private float _lastStepTime; 
+        private float _lastStepTime;
 
         public InstantTestInputProvider()
         {
@@ -23,11 +25,13 @@ namespace Test
 
         public InstantTestInputProvider(Vector3 startPosition,
             Vector3 endPosition,
-            int stepsAmount)
+            int stepsAmount,
+            int skipFramesOnStart)
         {
             _startPosition = startPosition;
             _endPosition = endPosition;
             _stepsAmount = stepsAmount;
+            _skipFramesOnStart = skipFramesOnStart;
             Init();
         }
 
@@ -39,6 +43,12 @@ namespace Test
 
         public void Tick()
         {
+            if (_skipFramesOnStart > _skippedFramesCount)
+            {
+                _skippedFramesCount++;
+                return;
+            }
+
             if (_stepsCount >= _stepsAmount)
             {
                 return;
