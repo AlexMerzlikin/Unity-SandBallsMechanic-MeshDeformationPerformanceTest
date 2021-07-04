@@ -1,27 +1,30 @@
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
-using UnityEngine;
+using Unity.Mathematics;
 
 namespace Core.JobDeformer
 {
+    [BurstCompile]
     public struct ArrayMeshDeformerJob : IJobParallelFor
     {
         [ReadOnly] private readonly float _radius;
         [ReadOnly] private readonly float _power;
-        [ReadOnly] private NativeArray<Vector3> _deformationPoints;
-
-        public NativeArray<Vector3> Vertices;
+        [ReadOnly] private NativeArray<float4> _deformationPoints;
+        [ReadOnly] private readonly float4 _up;
+        public NativeArray<float4> Vertices;
 
         public ArrayMeshDeformerJob(
             float radius,
             float power,
-            NativeArray<Vector3> vertices,
-            NativeArray<Vector3> deformationPoints)
+            NativeArray<float4> vertices,
+            NativeArray<float4> deformationPoints)
         {
             _radius = radius;
             _power = power;
             Vertices = vertices;
             _deformationPoints = deformationPoints;
+            _up = new float4(0, 1, 0, 0);
         }
 
         public void Execute(int index)
@@ -29,13 +32,18 @@ namespace Core.JobDeformer
             var vertex = Vertices[index];
             foreach (var point in _deformationPoints)
             {
-                var dist = (vertex - point).sqrMagnitude;
+                var dist = SquareMagnitude((vertex - point));
                 if (dist < _radius)
                 {
-                    vertex -= Vector3.up * _power;
+                    vertex -= _up * _power;
                     Vertices[index] = vertex;
-                } 
+                }
             }
+        }
+
+        private float SquareMagnitude(float4 vector)
+        {
+            return vector.x * vector.x + vector.y * vector.y + vector.z * vector.z;
         }
     }
 }
