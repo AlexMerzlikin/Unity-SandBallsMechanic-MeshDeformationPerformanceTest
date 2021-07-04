@@ -11,7 +11,6 @@ namespace InputProvider
         {
             if (Input.GetMouseButton(0))
             {
-                Debug.Log($"{nameof(MouseInputProvider)}: {Input.mousePosition}");
                 OnInputReceived(Input.mousePosition);
             }
         }
