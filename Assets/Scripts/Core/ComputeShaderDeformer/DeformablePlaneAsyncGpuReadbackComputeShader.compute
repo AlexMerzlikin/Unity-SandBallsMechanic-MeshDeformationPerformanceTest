@@ -23,10 +23,7 @@ void CSMain(uint3 id : SV_DispatchThreadID)
     for (int i = 0; i < _DeformPositionsCount; i++)
     {
         const float distance = length(pos - _DeformPositions[i]);
-        if(distance < _Radius)
-        {
-            pos.y -= _Force;
-        }
+        pos.y -= _Force * step(distance, _Radius);
     }
     
     vertexBuffer[id.x].pos.y = pos.y;
