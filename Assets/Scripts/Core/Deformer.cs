@@ -42,5 +42,11 @@ namespace Core
                 }
             }
         }
+
+        [ContextMenu(nameof(ShowResult))]
+        public void ShowResult()
+        {
+            Debug.Log($"{nameof(Deformer)}: {_deformablePlane.TotalTimeTaken}");
+        }
     }
 }

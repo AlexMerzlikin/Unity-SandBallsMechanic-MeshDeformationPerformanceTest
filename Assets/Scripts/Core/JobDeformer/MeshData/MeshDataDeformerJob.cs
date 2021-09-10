@@ -39,7 +39,7 @@ namespace Core.JobDeformer
                 Uv = vertexData.Uv
             };
 
-            _vertexDataOutput[index] = v;
+            // _vertexDataOutput[index] = v;
             _vertexData[index] = v;
         }
     }

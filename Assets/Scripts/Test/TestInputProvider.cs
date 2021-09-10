@@ -12,7 +12,7 @@ namespace Test
         private readonly Vector3 _endPosition = new Vector3(950, -20, 0);
         private readonly int _stepsAmount = 30;
         private readonly float _stepCooldown = 0.05f;
-        private readonly float _initDelay = 1f;
+        private readonly float _initDelay = 10f;
 
         private Vector3 _step;
         private int _stepsCount;

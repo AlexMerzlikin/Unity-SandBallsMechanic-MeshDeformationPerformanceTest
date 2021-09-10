@@ -51,7 +51,8 @@ namespace Core.JobDeformer
             {
                 return;
             }
-
+            
+            StartEstimation();
             _scheduled = true;
             _job = new ArrayMeshDeformerJob(
                 _radiusOfDeformation,
@@ -74,6 +75,7 @@ namespace Core.JobDeformer
             _collider.sharedMesh = _mesh;
             _deformationPointsNativeArray.Clear();
             _scheduled = false;
+            FinishEstimation();
         }
     }
 }

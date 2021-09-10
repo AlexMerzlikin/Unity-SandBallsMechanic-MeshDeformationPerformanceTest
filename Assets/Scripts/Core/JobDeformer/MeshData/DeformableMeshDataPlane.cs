@@ -8,6 +8,7 @@ namespace Core.JobDeformer
     [RequireComponent(typeof(MeshFilter), typeof(MeshCollider))]
     public class DeformableMeshDataPlane : DeformablePlane
     {
+        [SerializeField] private  int _innerloopBatchCount = 64;
         private Mesh _mesh;
         private MeshCollider _collider;
         private NativeArray<VertexData> _vertexData;
@@ -66,7 +67,7 @@ namespace Core.JobDeformer
             _positionToDeform = transform.InverseTransformPoint(positionToDeform);
             var data = _meshDataArray[0];
             _meshDataOutput = CreateMeshDataOutput(data);
-            _vertexDataOutput = _meshDataOutput.GetVertexData<VertexData>();
+            _vertexData = _meshDataOutput.GetVertexData<VertexData>();
             ModifyVertexData();
         }
 
@@ -103,7 +104,7 @@ namespace Core.JobDeformer
                 _positionToDeform,
                 _vertexData,
                 _vertexDataOutput);
-            _handle = _job.Schedule(_vertexData.Length, 64);
+            _handle = _job.Schedule(_vertexData.Length, _innerloopBatchCount);
         }
 
         private void CompleteJob()
@@ -138,10 +139,10 @@ namespace Core.JobDeformer
             dataOutput.SetSubMesh(0, new SubMeshDescriptor(0, outputTris.Length),
                 MeshUpdateFlags.DontRecalculateBounds | MeshUpdateFlags.DontValidateIndices |
                 MeshUpdateFlags.DontNotifyMeshUsers);
-            if (_vertexDataOutput[0].Position == Vector3.zero)
-            {
-                return;
-            }
+            // if (_vertexDataOutput[0].Position == Vector3.zero)
+            // {
+            //     return;
+            // }
             Mesh.ApplyAndDisposeWritableMeshData(_meshDataArrayOutput, _mesh,
                 MeshUpdateFlags.DontRecalculateBounds | MeshUpdateFlags.DontValidateIndices);
             _collider.sharedMesh = _mesh;
