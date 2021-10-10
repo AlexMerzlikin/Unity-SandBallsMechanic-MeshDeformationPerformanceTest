@@ -83,7 +83,6 @@ namespace Core.JobDeformer
                 return;
             }
 
-            StartEstimation();
             _scheduled = true;
             _meshDataArrayOutput = Mesh.AllocateWritableMeshData(1);
             var outputMesh = _meshDataArrayOutput[0];
@@ -135,7 +134,6 @@ namespace Core.JobDeformer
             _collider.sharedMesh = _mesh;
             _scheduled = false;
             _hasPoint = false;
-            FinishEstimation();
         }
 
 
