@@ -1,3 +1,4 @@
+using Core.JobDeformer;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
@@ -5,8 +6,11 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace Core.JobDeformer
+namespace Core.MeshData
 {
+    /// <summary>
+    /// Jobified mesh deformation using MeshData API
+    /// </summary>
     [RequireComponent(typeof(MeshFilter), typeof(MeshCollider))]
     public class JobDeformableMeshDataPlane : DeformablePlane
     {

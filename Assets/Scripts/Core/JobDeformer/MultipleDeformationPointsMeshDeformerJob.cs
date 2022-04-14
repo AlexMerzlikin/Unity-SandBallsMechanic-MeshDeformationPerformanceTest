@@ -4,7 +4,10 @@ using UnityEngine;
 
 namespace Core.JobDeformer
 {
-    public struct ArrayMeshDeformerJob : IJobParallelFor
+    /// <summary>
+    /// Modifies Vertices array using multiple deformation points at once
+    /// </summary>
+    public struct MultipleDeformationPointsMeshDeformerJob : IJobParallelFor
     {
         [ReadOnly] private readonly float _radius;
         [ReadOnly] private readonly float _power;
@@ -12,7 +15,7 @@ namespace Core.JobDeformer
 
         public NativeArray<Vector3> Vertices;
 
-        public ArrayMeshDeformerJob(
+        public MultipleDeformationPointsMeshDeformerJob(
             float radius,
             float power,
             NativeArray<Vector3> vertices,

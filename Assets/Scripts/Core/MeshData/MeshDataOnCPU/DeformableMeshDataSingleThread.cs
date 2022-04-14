@@ -1,9 +1,13 @@
+using Core.JobDeformer;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace Core.JobDeformer
+namespace Core.MeshData.MeshDataOnCPU
 {
+    /// <summary>
+    /// Modifies a mesh using MeshData API, but on the main thread for easier debugging
+    /// </summary>
     [RequireComponent(typeof(MeshFilter), typeof(MeshCollider))]
     public class DeformableMeshDataSingleThread : DeformablePlane
     {

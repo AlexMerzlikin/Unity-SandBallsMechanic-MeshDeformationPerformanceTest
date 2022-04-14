@@ -1,7 +1,10 @@
 using UnityEngine;
 
-namespace Core
+namespace Core.Basic
 {
+    /// <summary>
+    /// Basic deformable mesh implementation with direct modification of vertices array and setting it back to the mesh
+    /// </summary>
     [RequireComponent(typeof(MeshFilter), typeof(MeshCollider))]
     public class DeformableMeshPlane : DeformablePlane
     {

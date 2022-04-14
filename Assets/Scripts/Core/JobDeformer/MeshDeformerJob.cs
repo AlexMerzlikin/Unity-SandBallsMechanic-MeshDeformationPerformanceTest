@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace Core.JobDeformer
 {
+    /// <summary>
+    /// Modifies Vertices array using a single deformation point
+    /// </summary>
     public struct MeshDeformerJob : IJobParallelFor
     {
         [ReadOnly] private readonly Vector3 _center;

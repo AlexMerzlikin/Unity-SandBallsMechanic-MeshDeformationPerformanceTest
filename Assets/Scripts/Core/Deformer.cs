@@ -34,12 +34,14 @@ namespace Core
 
         private void DeformMesh(Ray ray)
         {
-            if (Physics.Raycast(ray, out var hit))
+            if (!Physics.Raycast(ray, out var hit))
             {
-                if ((_deformablePlane.transform.position - hit.point).sqrMagnitude < _planeDistance)
-                {
-                    _deformablePlane.Deform(hit.point);
-                }
+                return;
+            }
+
+            if ((_deformablePlane.transform.position - hit.point).sqrMagnitude < _planeDistance)
+            {
+                _deformablePlane.Deform(hit.point);
             }
         }
     }

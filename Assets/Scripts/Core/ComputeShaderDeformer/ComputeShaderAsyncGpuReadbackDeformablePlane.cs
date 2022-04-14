@@ -1,21 +1,19 @@
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
+using Core.JobDeformer;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 namespace Core.ComputeShaderDeformer
 {
+    /// <summary>
+    /// Modifies a mesh by:
+    /// 1. Updating NativeArray<VertexData> in the compute shader
+    /// 2. Getting the result via AsyncGPUReadback
+    /// 3. Using mesh.SetVertexBufferData<VertexData> to set positions, normals, and UVs in a single call
+    /// </summary>
     public class ComputeShaderAsyncGpuReadbackDeformablePlane : DeformablePlane
     {
-        [StructLayout(LayoutKind.Sequential)]
-        private struct VertexData
-        {
-            public Vector3 pos;
-            public Vector3 nor;
-            public Vector2 uv;
-        }
-
         [SerializeField] private ComputeShader _computeShader;
 
         private Mesh _mesh;
@@ -79,9 +77,9 @@ namespace Core.ComputeShaderDeformer
             {
                 var v = new VertexData
                 {
-                    pos = _mesh.vertices[i],
-                    nor = _mesh.normals[i],
-                    uv = _mesh.uv[i]
+                    Position = _mesh.vertices[i],
+                    Normal = _mesh.normals[i],
+                    Uv = _mesh.uv[i]
                 };
                 _vertexData[i] = v;
             }

@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace Core.JobDeformer
 {
+    /// <summary>
+    /// Jobified vertices array update. Modifies a mesh by using mesh.vertices setter
+    /// </summary>
     [RequireComponent(typeof(MeshFilter), typeof(MeshCollider))]
     public class JobDeformableMeshPlane : DeformablePlane
     {
@@ -11,7 +14,7 @@ namespace Core.JobDeformer
         private MeshCollider _collider;
         private NativeArray<Vector3> _vertices;
         private bool _scheduled;
-        private ArrayMeshDeformerJob _job;
+        private MultipleDeformationPointsMeshDeformerJob _job;
         private JobHandle _handle;
         private NativeList<Vector3> _deformationPointsNativeArray;
 
@@ -53,7 +56,7 @@ namespace Core.JobDeformer
             }
             
             _scheduled = true;
-            _job = new ArrayMeshDeformerJob(
+            _job = new MultipleDeformationPointsMeshDeformerJob(
                 _radiusOfDeformation,
                 _powerOfDeformation,
                 _vertices,

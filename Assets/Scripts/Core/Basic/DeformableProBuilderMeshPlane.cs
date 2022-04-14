@@ -2,8 +2,12 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 
-namespace Core
+namespace Core.Basic
 {
+    /// <summary>
+    /// Basic deformable mesh implementation with direct modification of vertices array and setting it back to the mesh
+    /// Uses ProBuilderMesh instead of the default Mesh type
+    /// </summary>
     [RequireComponent(typeof(ProBuilderMesh))]
     public class DeformableProBuilderMeshPlane : DeformablePlane
     {
