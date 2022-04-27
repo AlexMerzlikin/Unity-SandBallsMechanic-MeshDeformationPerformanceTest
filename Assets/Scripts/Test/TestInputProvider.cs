@@ -12,11 +12,12 @@ namespace Test
         private readonly Vector3 _endPosition = new Vector3(950, -20, 0);
         private readonly int _stepsAmount = 30;
         private readonly float _stepCooldown = 0.05f;
-        private readonly float _initDelay = 10f;
+        private readonly float _initDelay = 5f;
 
         private Vector3 _step;
         private int _stepsCount;
         private float _lastStepTime; 
+        private float _startTime; 
 
         public TestInputProvider()
         {
@@ -42,11 +43,12 @@ namespace Test
             var diff = _startPosition - _endPosition;
             _step = diff / _stepsAmount;
             _lastStepTime = _initDelay + _stepCooldown;
+            _startTime = Time.realtimeSinceStartup;
         }
 
         public void Tick()
         {
-            if (_initDelay > Time.realtimeSinceStartup)
+            if (_initDelay > Time.realtimeSinceStartup - _startTime)
             {
                 return;
             }
