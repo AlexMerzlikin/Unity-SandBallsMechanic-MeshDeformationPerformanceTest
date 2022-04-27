@@ -1,5 +1,7 @@
 # Sand Balls Mechanic: Mesh Deformation Performance Test
 
+![DeformationSample](DeformationSample.gif)
+
 The repository contains implementation of Sand Balls mechanic using different approaches to deform a mesh.
 The goal is to play around with [MeshData API](https://docs.unity3d.com/2020.1/Documentation/ScriptReference/Mesh.MeshData.html) and compute shader with [AsyncGPUReadback](https://docs.unity3d.com/ScriptReference/Rendering.AsyncGPUReadback.html).
 And then compare its performance to other approaches.
