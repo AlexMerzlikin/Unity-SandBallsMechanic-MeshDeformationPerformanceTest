@@ -359,7 +359,7 @@ PrefabInstance:
     - target: {fileID: 7659211141620975871, guid: c31c841c570319a48bede1b0247e30f4,
         type: 3}
       propertyPath: _radiusOfDeformation
-      value: 0.2
+      value: 0.4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c31c841c570319a48bede1b0247e30f4, type: 3}
@@ -818,7 +818,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _planeDistance: 100
   _deformablePlane: {fileID: 1846568975}
-  _inputProviderType: 0
+  _inputProviderType: 2
 --- !u!1 &1029661341
 GameObject:
   m_ObjectHideFlags: 0
