@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Core.Basic
 {
     /// <summary>
-    /// Basic deformable mesh implementation with direct modification of vertices array and setting it back to the mesh
+    /// Basic deformable mesh implementation with direct modification of vertices array and setting it back into the mesh in the main thread
     /// </summary>
     [RequireComponent(typeof(MeshFilter), typeof(MeshCollider))]
     public class DeformableMeshPlane : DeformablePlane
