@@ -16,20 +16,20 @@ namespace Core.JobDeformer
         private bool _scheduled;
         private MultipleDeformationPointsMeshDeformerJob _job;
         private JobHandle _handle;
-        private NativeList<Vector3> _deformationPointsNativeArray;
+        private NativeList<Vector3> _deformationPoints;
 
         public override void Deform(Vector3 point)
         {
-            _deformationPointsNativeArray.Add(transform.InverseTransformPoint(point));
+            _deformationPoints.Add(transform.InverseTransformPoint(point));
         }
 
         private void Awake()
         {
-            _mesh = gameObject.GetComponent<MeshFilter>().mesh;
+            _mesh = GetComponent<MeshFilter>().mesh;
             _mesh.MarkDynamic();
-            _collider = gameObject.GetComponent<MeshCollider>();
+            _collider = GetComponent<MeshCollider>();
             _vertices = new NativeArray<Vector3>(_mesh.vertices, Allocator.Persistent);
-            _deformationPointsNativeArray = new NativeList<Vector3>(Allocator.Persistent);
+            _deformationPoints = new NativeList<Vector3>(Allocator.Persistent);
         }
 
         private void Update()
@@ -45,22 +45,22 @@ namespace Core.JobDeformer
         private void OnDestroy()
         {
             _vertices.Dispose();
-            _deformationPointsNativeArray.Dispose();
+            _deformationPoints.Dispose();
         }
 
         private void ScheduleJob()
         {
-            if (_scheduled || _deformationPointsNativeArray.Length == 0)
+            if (_scheduled || _deformationPoints.Length == 0)
             {
                 return;
             }
-            
+
             _scheduled = true;
             _job = new MultipleDeformationPointsMeshDeformerJob(
                 _radiusOfDeformation,
                 _powerOfDeformation,
                 _vertices,
-                _deformationPointsNativeArray);
+                _deformationPoints);
             _handle = _job.Schedule(_vertices.Length, 64);
         }
 
@@ -75,7 +75,7 @@ namespace Core.JobDeformer
             _job.Vertices.CopyTo(_vertices);
             _mesh.vertices = _vertices.ToArray();
             _collider.sharedMesh = _mesh;
-            _deformationPointsNativeArray.Clear();
+            _deformationPoints.Clear();
             _scheduled = false;
         }
     }

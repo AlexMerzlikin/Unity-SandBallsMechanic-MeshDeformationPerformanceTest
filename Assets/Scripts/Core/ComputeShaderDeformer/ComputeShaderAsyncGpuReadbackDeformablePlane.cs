@@ -12,6 +12,7 @@ namespace Core.ComputeShaderDeformer
     /// 2. Getting the result via AsyncGPUReadback
     /// 3. Using mesh.SetVertexBufferData<VertexData> to set positions, normals, and UVs in a single call
     /// </summary>
+    [RequireComponent(typeof(MeshFilter), typeof(MeshCollider))]
     public class ComputeShaderAsyncGpuReadbackDeformablePlane : DeformablePlane
     {
         [SerializeField] private ComputeShader _computeShader;
