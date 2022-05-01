@@ -120,7 +120,7 @@ namespace Core.ComputeShaderDeformer
 
         private void Dispatch()
         {
-            if (_deformationPoints.Count == 0)
+            if (_deformationPoints.Count == 0 || _isDispatched)
             {
                 return;
             }
@@ -129,12 +129,6 @@ namespace Core.ComputeShaderDeformer
             _computeShader.SetInt(_deformationPointsCountPropertyId, _deformationPoints.Count);
             _computeShader.Dispatch(_kernel, _dispatchCount, 1, 1);
             _deformationPoints.Clear();
-
-            if (_isDispatched)
-            {
-                return;
-            }
-
             _isDispatched = true;
             _request = AsyncGPUReadback.Request(_computeBuffer);
         }

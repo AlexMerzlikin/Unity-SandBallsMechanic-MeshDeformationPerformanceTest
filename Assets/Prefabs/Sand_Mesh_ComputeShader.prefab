@@ -112,6 +112,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _radiusOfDeformation: 0.4
   _powerOfDeformation: 1
-  computeShader: {fileID: 7200000, guid: eb642031eb2edd848b34071eb749139b, type: 3}
-  mf: {fileID: 0}
-  mc: {fileID: 0}
+  _computeShader: {fileID: 7200000, guid: eb642031eb2edd848b34071eb749139b, type: 3}

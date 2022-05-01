@@ -99,7 +99,7 @@ LightmapSettings:
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 112000000, guid: 47dbfc948d4f7414f8565da0b4739f82,
     type: 2}
-  m_LightingSettings: {fileID: 4890085278179872738, guid: 7d54c30791ac6674e9b3b96b470dda38,
+  m_LightingSettings: {fileID: 4890085278179872738, guid: c025eee3e2f514845a1faac91a389d8c,
     type: 2}
 --- !u!196 &4
 NavMeshSettings:
@@ -345,21 +345,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Sand_Mesh_ComputeShader
-      objectReference: {fileID: 0}
-    - target: {fileID: 7659211141620975871, guid: c31c841c570319a48bede1b0247e30f4,
-        type: 3}
-      propertyPath: mc
-      value: 
-      objectReference: {fileID: 1846568976}
-    - target: {fileID: 7659211141620975871, guid: c31c841c570319a48bede1b0247e30f4,
-        type: 3}
-      propertyPath: mf
-      value: 
-      objectReference: {fileID: 1846568977}
-    - target: {fileID: 7659211141620975871, guid: c31c841c570319a48bede1b0247e30f4,
-        type: 3}
-      propertyPath: _radiusOfDeformation
-      value: 0.4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c31c841c570319a48bede1b0247e30f4, type: 3}
@@ -2380,18 +2365,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f731cfe60adc4b82aad095b757276ea2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!64 &1846568976 stripped
-MeshCollider:
-  m_CorrespondingSourceObject: {fileID: 7659211141620975868, guid: c31c841c570319a48bede1b0247e30f4,
-    type: 3}
-  m_PrefabInstance: {fileID: 552955897}
-  m_PrefabAsset: {fileID: 0}
---- !u!33 &1846568977 stripped
-MeshFilter:
-  m_CorrespondingSourceObject: {fileID: 7659211141620975859, guid: c31c841c570319a48bede1b0247e30f4,
-    type: 3}
-  m_PrefabInstance: {fileID: 552955897}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2082864834
 GameObject:
   m_ObjectHideFlags: 0
