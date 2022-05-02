@@ -73,14 +73,18 @@ namespace Core.ComputeShaderDeformer
 
         private void CreateVertexData()
         {
-            _vertexData = new NativeArray<VertexData>(_mesh.vertexCount, Allocator.Temp);
-            for (var i = 0; i < _mesh.vertexCount; ++i)
+            var meshVertexCount = _mesh.vertexCount;
+            _vertexData = new NativeArray<VertexData>(meshVertexCount, Allocator.Temp);
+            var meshVertices = _mesh.vertices;
+            var meshNormals = _mesh.normals;
+            var meshUV = _mesh.uv;
+            for (var i = 0; i < meshVertexCount; ++i)
             {
                 var v = new VertexData
                 {
-                    Position = _mesh.vertices[i],
-                    Normal = _mesh.normals[i],
-                    Uv = _mesh.uv[i]
+                    Position = meshVertices[i],
+                    Normal = meshNormals[i],
+                    Uv = meshUV[i]
                 };
                 _vertexData[i] = v;
             }
