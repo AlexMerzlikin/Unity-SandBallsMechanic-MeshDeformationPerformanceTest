@@ -6,22 +6,33 @@ namespace Core.JobDeformer
 {
     /// <summary>
     /// Jobified vertices array update. Modifies a mesh by using mesh.vertices setter
-    /// Schedules a job with a list of deformation points accumulated during execution of a previous job
+    /// Schedules a job only with 1 point to deform
     /// </summary>
     [RequireComponent(typeof(MeshFilter), typeof(MeshCollider))]
-    public class JobDeformableMeshPlane : DeformablePlane
+    public class SinglePointJobDeformableMeshPlane : DeformablePlane
     {
         private Mesh _mesh;
         private MeshCollider _collider;
         private NativeArray<Vector3> _vertices;
         private bool _scheduled;
-        private MultipleDeformationPointsMeshDeformerJob _job;
+        private MeshDeformerJob _job;
         private JobHandle _handle;
         private NativeList<Vector3> _deformationPoints;
 
         public override void Deform(Vector3 point)
         {
-            _deformationPoints.Add(transform.InverseTransformPoint(point));
+            if (_scheduled)
+            {
+                return;
+            }
+
+            _scheduled = true;
+            _job = new MeshDeformerJob(
+                transform.InverseTransformPoint(point),
+                _radiusOfDeformation,
+                _powerOfDeformation,
+                _vertices);
+            _handle = _job.Schedule(_vertices.Length, 64);
         }
 
         private void Awake()
@@ -33,11 +44,6 @@ namespace Core.JobDeformer
             _deformationPoints = new NativeList<Vector3>(Allocator.Persistent);
         }
 
-        private void Update()
-        {
-            ScheduleJob();
-        }
-
         private void LateUpdate()
         {
             CompleteJob();
@@ -47,22 +53,6 @@ namespace Core.JobDeformer
         {
             _vertices.Dispose();
             _deformationPoints.Dispose();
-        }
-
-        private void ScheduleJob()
-        {
-            if (_scheduled || _deformationPoints.Length == 0)
-            {
-                return;
-            }
-
-            _scheduled = true;
-            _job = new MultipleDeformationPointsMeshDeformerJob(
-                _radiusOfDeformation,
-                _powerOfDeformation,
-                _vertices,
-                _deformationPoints);
-            _handle = _job.Schedule(_vertices.Length, 64);
         }
 
         private void CompleteJob()

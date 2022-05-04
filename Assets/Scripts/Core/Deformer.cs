@@ -27,7 +27,7 @@ namespace Core
             DeformMesh(ray);
         }
 
-        private void FixedUpdate()
+        private void Update()
         {
             _inputProvider.Tick();
         }
