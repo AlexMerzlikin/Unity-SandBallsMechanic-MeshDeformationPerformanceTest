@@ -89,6 +89,7 @@ namespace Core.JobDeformer
         {
             _vertices.Dispose();
             _deformationPointsBuffer.Dispose();
+            _deformationPoints.Dispose();
         }
 
         private void ScheduleJob()
