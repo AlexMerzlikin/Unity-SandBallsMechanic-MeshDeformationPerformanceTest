@@ -2394,16 +2394,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 4330397696491161954, guid: 60681d4b86ffee84ca50f96d00a0146f,
-        type: 3}
-      propertyPath: _bufferingFrames
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4330397696491161954, guid: 60681d4b86ffee84ca50f96d00a0146f,
-        type: 3}
-      propertyPath: _radiusOfDeformation
-      value: 0.4
-      objectReference: {fileID: 0}
     - target: {fileID: 6220124407067162455, guid: 60681d4b86ffee84ca50f96d00a0146f,
         type: 3}
       propertyPath: m_Name
