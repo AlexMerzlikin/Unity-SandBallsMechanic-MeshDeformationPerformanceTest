@@ -14,6 +14,7 @@ namespace Core.JobDeformer
     {
         [SerializeField] private int _lerpedDeformationPointsArraySize = 20;
         [SerializeField] private int _bufferingFrames = 2;
+        [SerializeField] private int _innerloopBatchCount = 64;
 
         private Mesh _mesh;
         private MeshCollider _collider;
@@ -110,7 +111,7 @@ namespace Core.JobDeformer
             _previousInputFrame = Time.frameCount;
             _previousInput = _deformationPointsBuffer[^1];
             _deformationPointsBuffer.Clear();
-            _handle = _job.Schedule(_vertices.Length, 64);
+            _handle = _job.Schedule(_vertices.Length, _innerloopBatchCount);
         }
 
         private void CompleteJob()
