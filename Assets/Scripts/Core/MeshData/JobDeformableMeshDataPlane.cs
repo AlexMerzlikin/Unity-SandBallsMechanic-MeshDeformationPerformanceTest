@@ -37,6 +37,8 @@ namespace Core.MeshData
         private JobHandle _jobHandle;
         private bool _scheduled;
         private bool _hasPoint;
+        private NativeArray<ushort> _sourceIndexData;
+        private NativeArray<ushort> _outputIndexData;
 
         private void Awake()
         {
@@ -61,6 +63,7 @@ namespace Core.MeshData
             _meshDataArray[0].GetVertices(_tempVertices.Reinterpret<Vector3>());
             _meshDataArray[0].GetNormals(_tempNormals.Reinterpret<Vector3>());
             _meshDataArray[0].GetUVs(0, _tempUvs.Reinterpret<Vector2>());
+            _sourceIndexData = _meshDataArray[0].GetIndexData<ushort>();
             _collider = gameObject.GetComponent<MeshCollider>();
         }
 
@@ -93,6 +96,7 @@ namespace Core.MeshData
             var meshData = _meshDataArray[0];
             outputMesh.SetIndexBufferParams(meshData.GetSubMesh(0).indexCount, meshData.indexFormat);
             outputMesh.SetVertexBufferParams(meshData.vertexCount, _layout);
+            _outputIndexData = outputMesh.GetIndexData<ushort>();
             _job = new ProcessMeshDataJob
             {
                 Point = _positionToDeform,
@@ -117,14 +121,7 @@ namespace Core.MeshData
 
             _jobHandle.Complete();
 
-            var indexCount = _job.MeshData[0].GetSubMesh(0).indexCount;
-            var outputTris = _job.OutputMesh.GetIndexData<ushort>();
-            var tris = _job.MeshData[0].GetIndexData<ushort>();
-            for (var i = 0; i < indexCount; ++i)
-            {
-                outputTris[i] = tris[i];
-            }
-
+           _sourceIndexData.CopyTo(_outputIndexData);
             var sm = new SubMeshDescriptor(0, _job.MeshData[0].GetSubMesh(0).indexCount, MeshTopology.Triangles)
             {
                 firstVertex = 0, vertexCount = _job.MeshData[0].vertexCount
