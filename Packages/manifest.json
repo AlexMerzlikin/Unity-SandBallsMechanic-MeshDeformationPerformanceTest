@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.jetbrains.riderflow": "2022.1.1-185",
     "com.unity.ide.rider": "3.0.13",
     "com.unity.jobs": "0.8.0-preview.23",
     "com.unity.probuilder": "5.0.3",
@@ -37,6 +38,16 @@
     "com.unity.modules.video": "1.0.0",
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
-    "com.unity.modules.xr": "1.0.0"
-  }
+    "com.unity.modules.xr": "1.0.0",
+    "com.unity.test-framework.performance": "2.8.0-preview"
+  },
+  "scopedRegistries": [
+    {
+      "name": "JetBrains",
+      "url": "https://npm.pkg.jetbrains.space/public/p/jetbrains-gamedev/jetbrains-gamedev/",
+      "scopes": [
+        "com.jetbrains"
+      ]
+    }
+  ]
 }

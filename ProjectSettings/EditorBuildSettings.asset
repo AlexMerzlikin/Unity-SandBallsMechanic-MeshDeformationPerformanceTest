@@ -6,9 +6,21 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/JobifiedNaiveSample.unity
-    guid: 08c06f6a3979f3c4b9e37944004ade17
-  - enabled: 0
     path: Assets/Scenes/ComputeShaderWithAsyncReadbackSample.unity
     guid: 965007e094450f44c8f2e663c315fd11
+  - enabled: 1
+    path: Assets/Scenes/JobifiedMeshDataApiSample.unity
+    guid: 44bdd453a48550845ba15565af82561e
+  - enabled: 1
+    path: Assets/Scenes/JobifiedNaiveSample_Lerp.unity
+    guid: b44064528a6c0db40a38e71d2c08706b
+  - enabled: 1
+    path: Assets/Scenes/NaiveSample.unity
+    guid: 5ff4338f5e0f4484b97d9ff6b13b1f8b
+  - enabled: 1
+    path: Assets/Scenes/MeshDataApiOnTheMainThreadSample.unity
+    guid: 4faea3a3bc4ac6e44a9203e0c803dcbe
+  - enabled: 1
+    path: Assets/Scenes/ProBuilderSample.unity
+    guid: 39f5209d5e7670d46a9ad2ffe0d7e521
   m_configObjects: {}
