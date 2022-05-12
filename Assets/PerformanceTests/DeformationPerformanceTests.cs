@@ -33,12 +33,6 @@ namespace PerformanceTests
             yield return DeformPlane("NaiveSample");
         }
 
-        [UnityTest, Performance]
-        public IEnumerator DeformableMeshPlane_ProBuilder_PerformanceTest()
-        {
-            yield return DeformPlane("ProBuilderSample");
-        }
-
         private static IEnumerator DeformPlane(string sceneName)
         {
             yield return SceneManager.LoadSceneAsync(sceneName);

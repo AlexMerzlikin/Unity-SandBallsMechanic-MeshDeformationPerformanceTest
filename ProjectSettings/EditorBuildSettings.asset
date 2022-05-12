@@ -20,7 +20,4 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MeshDataApiOnTheMainThreadSample.unity
     guid: 4faea3a3bc4ac6e44a9203e0c803dcbe
-  - enabled: 1
-    path: Assets/Scenes/ProBuilderSample.unity
-    guid: 39f5209d5e7670d46a9ad2ffe0d7e521
   m_configObjects: {}
