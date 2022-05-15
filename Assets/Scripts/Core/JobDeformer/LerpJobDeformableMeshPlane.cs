@@ -28,6 +28,12 @@ namespace Core.JobDeformer
         private int _previousInputFrame;
         private Vector3 _previousInput;
 
+        public int InnerloopBatchCount
+        {
+            get => _innerloopBatchCount;
+            set => _innerloopBatchCount = value;
+        }
+
         public override void Deform(Vector3 point)
         {
             var newPoint = transform.InverseTransformPoint(point);
@@ -111,7 +117,7 @@ namespace Core.JobDeformer
             _previousInputFrame = Time.frameCount;
             _previousInput = _deformationPointsBuffer[^1];
             _deformationPointsBuffer.Clear();
-            _handle = _job.Schedule(_vertices.Length, _innerloopBatchCount);
+            _handle = _job.Schedule(_vertices.Length, InnerloopBatchCount);
         }
 
         private void CompleteJob()
