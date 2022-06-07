@@ -130,7 +130,7 @@ namespace Core.JobDeformer
             _handle.Complete();
             _deformationPoints.Clear();
             _job.Vertices.CopyTo(_vertices);
-            _mesh.vertices = _vertices.ToArray();
+            _mesh.SetVertices(_vertices);
             _collider.sharedMesh = _mesh;
             _scheduled = false;
         }
