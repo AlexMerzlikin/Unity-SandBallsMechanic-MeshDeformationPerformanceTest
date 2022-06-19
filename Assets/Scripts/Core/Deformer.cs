@@ -7,7 +7,6 @@ namespace Core
     [RequireComponent(typeof(Camera))]
     public class Deformer : MonoBehaviour
     {
-        [SerializeField] private float _planeDistance;
         [SerializeField] private DeformablePlane _deformablePlane;
         [SerializeField] private InputProviderType _inputProviderType;
 
@@ -39,10 +38,7 @@ namespace Core
                 return;
             }
 
-            if ((_deformablePlane.transform.position - hit.point).sqrMagnitude < _planeDistance)
-            {
-                _deformablePlane.Deform(hit.point);
-            }
+            _deformablePlane.Deform(hit.point);
         }
     }
 }
