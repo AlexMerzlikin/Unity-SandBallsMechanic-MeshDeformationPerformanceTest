@@ -18,6 +18,7 @@ namespace Core.JobDeformer
         private MultipleDeformationPointsMeshDeformerJob _job;
         private JobHandle _handle;
         private NativeList<Vector3> _deformationPoints;
+        private NativeList<Vector3> _deformationPointsCopy;
 
         public override void Deform(Vector3 point)
         {
@@ -31,6 +32,7 @@ namespace Core.JobDeformer
             _collider = GetComponent<MeshCollider>();
             _vertices = new NativeArray<Vector3>(_mesh.vertices, Allocator.Persistent);
             _deformationPoints = new NativeList<Vector3>(Allocator.Persistent);
+            _deformationPointsCopy = new NativeList<Vector3>(Allocator.Persistent);
         }
 
         private void Update()
@@ -57,11 +59,13 @@ namespace Core.JobDeformer
             }
 
             _scheduled = true;
+            _deformationPointsCopy.CopyFrom(_deformationPoints);
+            _deformationPoints.Clear();
             _job = new MultipleDeformationPointsMeshDeformerJob(
                 _radiusOfDeformation,
                 _powerOfDeformation,
                 _vertices,
-                _deformationPoints);
+                _deformationPointsCopy);
             _handle = _job.Schedule(_vertices.Length, 64);
         }
 
@@ -76,7 +80,7 @@ namespace Core.JobDeformer
             _job.Vertices.CopyTo(_vertices);
             _mesh.SetVertices(_vertices);
             _collider.sharedMesh = _mesh;
-            _deformationPoints.Clear();
+            _deformationPointsCopy.Clear();
             _scheduled = false;
         }
     }
