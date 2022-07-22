@@ -17,4 +17,4 @@ The following samples were implemented:
 Each sample can be found inside the [Scenes](https://github.com/AlexMerzlikin/SandBallsMechanic-MeshDeformationPerformanceTest/tree/master/Assets/Scenes) folder
 
 ## Perforormance Test Results
-TBA
+![PerformanceTestExample](PerformanceTest_example.gif)
