@@ -22,7 +22,7 @@ Each sample can be found inside the [Scenes](https://github.com/AlexMerzlikin/Sa
 
 
 ### Results
-Run on OnePlus 9 (Snapdragon 888)
+Run on OnePlus 9 (Snapdragon 888, VSync on (forced), 120Hz refresh rate)
 |                                            Method |   Median |      Dev |   StdDev |
 |---------------------------------------------------|---------:|---------:|---------:|
 | DeformableMeshPlane_ComputeShader_PerformanceTest | 8,27 ms  | 0,43 ms  | 3,53 ms  |
