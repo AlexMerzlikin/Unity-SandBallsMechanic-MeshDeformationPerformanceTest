@@ -14,8 +14,8 @@ namespace Core.MeshData
     [RequireComponent(typeof(MeshFilter), typeof(MeshCollider))]
     public class JobDeformableMeshDataPlane : DeformablePlane
     {
-        [SerializeField] private  int _innerloopBatchCount = 64;
-        
+        [SerializeField] private int _innerloopBatchCount = 64;
+
         private Mesh _mesh;
         private MeshCollider _collider;
         private NativeArray<VertexData> _vertexData;
@@ -23,6 +23,7 @@ namespace Core.MeshData
         private Mesh.MeshDataArray _meshDataArray;
         private Mesh.MeshDataArray _meshDataArrayOutput;
         private VertexAttributeDescriptor[] _layout;
+        private SubMeshDescriptor _subMeshDescriptor;
 
         [NativeDisableContainerSafetyRestriction]
         private NativeArray<float3> _tempVertices;
@@ -64,6 +65,11 @@ namespace Core.MeshData
             _meshDataArray[0].GetNormals(_tempNormals.Reinterpret<Vector3>());
             _meshDataArray[0].GetUVs(0, _tempUvs.Reinterpret<Vector2>());
             _sourceIndexData = _meshDataArray[0].GetIndexData<ushort>();
+            _subMeshDescriptor =
+                new SubMeshDescriptor(0, _meshDataArray[0].GetSubMesh(0).indexCount, MeshTopology.Triangles)
+                {
+                    firstVertex = 0, vertexCount = _meshDataArray[0].vertexCount
+                };
             _collider = gameObject.GetComponent<MeshCollider>();
         }
 
@@ -121,16 +127,15 @@ namespace Core.MeshData
 
             _jobHandle.Complete();
 
-           _sourceIndexData.CopyTo(_outputIndexData);
-            var sm = new SubMeshDescriptor(0, _job.MeshData[0].GetSubMesh(0).indexCount, MeshTopology.Triangles)
-            {
-                firstVertex = 0, vertexCount = _job.MeshData[0].vertexCount
-            };
+            _sourceIndexData.CopyTo(_outputIndexData);
             _job.OutputMesh.subMeshCount = 1;
-            _job.OutputMesh.SetSubMesh(0, sm, MeshUpdateFlags.DontRecalculateBounds |
-                                              MeshUpdateFlags.DontValidateIndices |
-                                              MeshUpdateFlags.DontNotifyMeshUsers);
-            Mesh.ApplyAndDisposeWritableMeshData(_meshDataArrayOutput, _mesh,
+            _job.OutputMesh.SetSubMesh(0,
+                _subMeshDescriptor,
+                MeshUpdateFlags.DontRecalculateBounds | MeshUpdateFlags.DontValidateIndices |
+                MeshUpdateFlags.DontNotifyMeshUsers);
+            Mesh.ApplyAndDisposeWritableMeshData(
+                _meshDataArrayOutput,
+                _mesh,
                 MeshUpdateFlags.DontRecalculateBounds | MeshUpdateFlags.DontValidateIndices);
             _collider.sharedMesh = _mesh;
             _scheduled = false;
