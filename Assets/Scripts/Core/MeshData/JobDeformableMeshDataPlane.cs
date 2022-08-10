@@ -1,8 +1,6 @@
 using Core.JobDeformer;
 using Unity.Collections;
-using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -24,16 +22,6 @@ namespace Core.MeshData
         private Mesh.MeshDataArray _meshDataArrayOutput;
         private VertexAttributeDescriptor[] _layout;
         private SubMeshDescriptor _subMeshDescriptor;
-
-        [NativeDisableContainerSafetyRestriction]
-        private NativeArray<float3> _tempVertices;
-
-        [NativeDisableContainerSafetyRestriction]
-        private NativeArray<float3> _tempNormals;
-
-        [NativeDisableContainerSafetyRestriction]
-        private NativeArray<float2> _tempUvs;
-
         private ProcessMeshDataJob _job;
         private JobHandle _jobHandle;
         private bool _scheduled;
@@ -45,6 +33,7 @@ namespace Core.MeshData
         {
             _mesh = gameObject.GetComponent<MeshFilter>().mesh;
             _mesh.MarkDynamic();
+            CreateVertexDataArray();
             _meshDataArray = Mesh.AcquireReadOnlyMeshData(_mesh);
             _layout = new[]
             {
@@ -55,15 +44,6 @@ namespace Core.MeshData
                 new VertexAttributeDescriptor(VertexAttribute.TexCoord0,
                     _meshDataArray[0].GetVertexAttributeFormat(VertexAttribute.TexCoord0), 2),
             };
-            var vCount = _mesh.vertexCount;
-            _tempVertices =
-                new NativeArray<float3>(vCount, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
-            _tempNormals =
-                new NativeArray<float3>(vCount, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
-            _tempUvs = new NativeArray<float2>(vCount, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
-            _meshDataArray[0].GetVertices(_tempVertices.Reinterpret<Vector3>());
-            _meshDataArray[0].GetNormals(_tempNormals.Reinterpret<Vector3>());
-            _meshDataArray[0].GetUVs(0, _tempUvs.Reinterpret<Vector2>());
             _sourceIndexData = _meshDataArray[0].GetIndexData<ushort>();
             _subMeshDescriptor =
                 new SubMeshDescriptor(0, _meshDataArray[0].GetSubMesh(0).indexCount, MeshTopology.Triangles)
@@ -77,6 +57,21 @@ namespace Core.MeshData
         {
             _positionToDeform = transform.InverseTransformPoint(positionToDeform);
             _hasPoint = true;
+        }
+
+        private void CreateVertexDataArray()
+        {
+            _vertexData = new NativeArray<VertexData>(_mesh.vertexCount, Allocator.Persistent);
+            for (var i = 0; i < _mesh.vertexCount; ++i)
+            {
+                var v = new VertexData
+                {
+                    Position = _mesh.vertices[i],
+                    Normal = _mesh.normals[i],
+                    Uv = _mesh.uv[i]
+                };
+                _vertexData[i] = v;
+            }
         }
 
         private void Update()
@@ -102,16 +97,13 @@ namespace Core.MeshData
             var meshData = _meshDataArray[0];
             outputMesh.SetIndexBufferParams(meshData.GetSubMesh(0).indexCount, meshData.indexFormat);
             outputMesh.SetVertexBufferParams(meshData.vertexCount, _layout);
-            _outputIndexData = outputMesh.GetIndexData<ushort>();
             _job = new ProcessMeshDataJob
             {
                 Point = _positionToDeform,
                 Radius = _radiusOfDeformation,
                 Power = _powerOfDeformation,
                 MeshData = _meshDataArray,
-                TempVertices = _tempVertices,
-                TempNormals = _tempNormals,
-                TempUvs = _tempUvs,
+                VertexData = _vertexData,
                 OutputMesh = outputMesh
             };
 
@@ -126,7 +118,7 @@ namespace Core.MeshData
             }
 
             _jobHandle.Complete();
-
+            _outputIndexData = _job.OutputMesh.GetIndexData<ushort>();
             _sourceIndexData.CopyTo(_outputIndexData);
             _job.OutputMesh.subMeshCount = 1;
             _job.OutputMesh.SetSubMesh(0,
@@ -142,9 +134,9 @@ namespace Core.MeshData
             _hasPoint = false;
         }
 
-
         private void OnDestroy()
         {
+            _vertexData.Dispose();
             _meshDataArray.Dispose();
         }
     }
