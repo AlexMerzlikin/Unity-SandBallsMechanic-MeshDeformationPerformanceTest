@@ -28,7 +28,7 @@ namespace Core.ComputeShaderDeformer
         private readonly List<Vector4> _deformationPoints = new List<Vector4>(30);
         private readonly int _deformationPointsPropertyId = Shader.PropertyToID("_DeformPositions");
         private readonly int _deformationPointsCountPropertyId = Shader.PropertyToID("_DeformPositionsCount");
-        
+
         public override void Deform(Vector3 positionToDeform)
         {
             var point = transform.InverseTransformPoint(positionToDeform);
@@ -63,7 +63,7 @@ namespace Core.ComputeShaderDeformer
         {
             GatherResult();
         }
-        
+
         private void SetKernel()
         {
             _kernel = _computeShader.FindKernel("CSMain");
@@ -129,11 +129,11 @@ namespace Core.ComputeShaderDeformer
                 return;
             }
 
+            _isDispatched = true;
             _computeShader.SetVectorArray(_deformationPointsPropertyId, _deformationPoints.ToArray());
             _computeShader.SetInt(_deformationPointsCountPropertyId, _deformationPoints.Count);
             _computeShader.Dispatch(_kernel, _dispatchCount, 1, 1);
             _deformationPoints.Clear();
-            _isDispatched = true;
             _request = AsyncGPUReadback.Request(_computeBuffer);
         }
 
