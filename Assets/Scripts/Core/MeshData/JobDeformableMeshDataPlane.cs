@@ -16,7 +16,6 @@ namespace Core.MeshData
 
         private Mesh _mesh;
         private MeshCollider _collider;
-        private NativeArray<VertexData> _vertexData;
         private Vector3 _positionToDeform;
         private Mesh.MeshDataArray _meshDataArray;
         private Mesh.MeshDataArray _meshDataArrayOutput;
@@ -26,14 +25,16 @@ namespace Core.MeshData
         private JobHandle _jobHandle;
         private bool _scheduled;
         private bool _hasPoint;
-        private NativeArray<ushort> _sourceIndexData;
-        private NativeArray<ushort> _outputIndexData;
 
         private void Awake()
         {
             _mesh = gameObject.GetComponent<MeshFilter>().mesh;
-            _mesh.MarkDynamic();
-            CreateVertexDataArray();
+            CreateMeshData();
+            _collider = gameObject.GetComponent<MeshCollider>();
+        }
+
+        private void CreateMeshData()
+        {
             _meshDataArray = Mesh.AcquireReadOnlyMeshData(_mesh);
             _layout = new[]
             {
@@ -44,34 +45,17 @@ namespace Core.MeshData
                 new VertexAttributeDescriptor(VertexAttribute.TexCoord0,
                     _meshDataArray[0].GetVertexAttributeFormat(VertexAttribute.TexCoord0), 2),
             };
-            _sourceIndexData = _meshDataArray[0].GetIndexData<ushort>();
             _subMeshDescriptor =
                 new SubMeshDescriptor(0, _meshDataArray[0].GetSubMesh(0).indexCount, MeshTopology.Triangles)
                 {
                     firstVertex = 0, vertexCount = _meshDataArray[0].vertexCount
                 };
-            _collider = gameObject.GetComponent<MeshCollider>();
         }
 
         public override void Deform(Vector3 positionToDeform)
         {
             _positionToDeform = transform.InverseTransformPoint(positionToDeform);
             _hasPoint = true;
-        }
-
-        private void CreateVertexDataArray()
-        {
-            _vertexData = new NativeArray<VertexData>(_mesh.vertexCount, Allocator.Persistent);
-            for (var i = 0; i < _mesh.vertexCount; ++i)
-            {
-                var v = new VertexData
-                {
-                    Position = _mesh.vertices[i],
-                    Normal = _mesh.normals[i],
-                    Uv = _mesh.uv[i]
-                };
-                _vertexData[i] = v;
-            }
         }
 
         private void Update()
@@ -94,20 +78,22 @@ namespace Core.MeshData
             _scheduled = true;
             _meshDataArrayOutput = Mesh.AllocateWritableMeshData(1);
             var outputMesh = _meshDataArrayOutput[0];
+            _meshDataArray = Mesh.AcquireReadOnlyMeshData(_mesh);
             var meshData = _meshDataArray[0];
             outputMesh.SetIndexBufferParams(meshData.GetSubMesh(0).indexCount, meshData.indexFormat);
             outputMesh.SetVertexBufferParams(meshData.vertexCount, _layout);
+            var vertexData = meshData.GetVertexData<VertexData>();
             _job = new ProcessMeshDataJob
             {
                 Point = _positionToDeform,
                 Radius = _radiusOfDeformation,
                 Power = _powerOfDeformation,
                 MeshData = _meshDataArray,
-                VertexData = _vertexData,
+                VertexData = vertexData,
                 OutputMesh = outputMesh
             };
 
-            _jobHandle = _job.Schedule(_job.MeshData[0].vertexCount, _innerloopBatchCount);
+            _jobHandle = _job.Schedule(meshData.vertexCount, _innerloopBatchCount);
         }
 
         private void CompleteJob()
@@ -118,26 +104,33 @@ namespace Core.MeshData
             }
 
             _jobHandle.Complete();
-            _outputIndexData = _job.OutputMesh.GetIndexData<ushort>();
-            _sourceIndexData.CopyTo(_outputIndexData);
-            _job.OutputMesh.subMeshCount = 1;
-            _job.OutputMesh.SetSubMesh(0,
-                _subMeshDescriptor,
-                MeshUpdateFlags.DontRecalculateBounds | MeshUpdateFlags.DontValidateIndices |
-                MeshUpdateFlags.DontNotifyMeshUsers);
-            Mesh.ApplyAndDisposeWritableMeshData(
-                _meshDataArrayOutput,
-                _mesh,
-                MeshUpdateFlags.DontRecalculateBounds | MeshUpdateFlags.DontValidateIndices);
-            _collider.sharedMesh = _mesh;
+            UpdateMesh(_job.OutputMesh);
             _scheduled = false;
             _hasPoint = false;
         }
 
-        private void OnDestroy()
+        private void UpdateMesh(Mesh.MeshData meshData)
         {
-            _vertexData.Dispose();
+            var outputIndexData = meshData.GetIndexData<ushort>();
+            _meshDataArray[0].GetIndexData<ushort>().CopyTo(outputIndexData);
             _meshDataArray.Dispose();
+            meshData.subMeshCount = 1;
+            meshData.SetSubMesh(0,
+                _subMeshDescriptor,
+                MeshUpdateFlags.DontRecalculateBounds |
+                MeshUpdateFlags.DontValidateIndices |
+                MeshUpdateFlags.DontResetBoneBounds |
+                MeshUpdateFlags.DontNotifyMeshUsers);
+            _mesh.MarkDynamic();
+            Mesh.ApplyAndDisposeWritableMeshData(
+                _meshDataArrayOutput,
+                _mesh,
+                MeshUpdateFlags.DontRecalculateBounds |
+                MeshUpdateFlags.DontValidateIndices |
+                MeshUpdateFlags.DontResetBoneBounds |
+                MeshUpdateFlags.DontNotifyMeshUsers);
+            _mesh.RecalculateNormals();
+            _collider.sharedMesh = _mesh;
         }
     }
 }
