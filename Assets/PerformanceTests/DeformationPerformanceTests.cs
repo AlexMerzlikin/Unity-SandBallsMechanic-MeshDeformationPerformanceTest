@@ -15,13 +15,13 @@ namespace PerformanceTests
         [UnityTest, Performance]
         public IEnumerator DeformableMeshPlane_ComputeShader_PerformanceTest()
         {
-            yield return DeformationTestHelper.DeformPlane("ComputeShaderWithAsyncReadbackSample_Lerped");
+            yield return DeformationTestHelper.DeformPlane("ComputeShaderWithAsyncReadbackSample");
         }
 
         [UnityTest, Performance]
         public IEnumerator DeformableMeshPlane_NaiveJob_PerformanceTest()
         {
-            yield return DeformationTestHelper.DeformPlane("JobifiedNaiveSample_Lerp");
+            yield return DeformationTestHelper.DeformPlane("JobifiedNaiveSample");
         }
 
         [UnityTest, Performance]

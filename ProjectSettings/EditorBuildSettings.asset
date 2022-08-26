@@ -23,4 +23,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/NaiveSample_LowPoly.unity
     guid: 518c8f5330541dd41ad8d207624ca5b0
+  - enabled: 1
+    path: Assets/Scenes/ComputeShaderWithAsyncReadbackSample.unity
+    guid: 965007e094450f44c8f2e663c315fd11
+  - enabled: 1
+    path: Assets/Scenes/JobifiedNaiveSample.unity
+    guid: 08c06f6a3979f3c4b9e37944004ade17
   m_configObjects: {}
