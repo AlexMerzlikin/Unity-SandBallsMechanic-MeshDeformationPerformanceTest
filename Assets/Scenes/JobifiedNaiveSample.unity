@@ -132,6 +132,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2204547986411887907, guid: d4730a12ba2ce43499147dc1ede432e0,
+        type: 3}
+      propertyPath: _radiusOfDeformation
+      value: 0.4
+      objectReference: {fileID: 0}
     - target: {fileID: 2204547986411887921, guid: d4730a12ba2ce43499147dc1ede432e0,
         type: 3}
       propertyPath: m_RootOrder
@@ -187,6 +192,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2204547986411887922, guid: d4730a12ba2ce43499147dc1ede432e0,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 4300000, guid: 15c3965052388a74f93f6aebd3f00862, type: 2}
     - target: {fileID: 2204547986411887932, guid: d4730a12ba2ce43499147dc1ede432e0,
         type: 3}
       propertyPath: m_Name
@@ -451,7 +461,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh19534
+  m_Name: pb_Mesh20668
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -807,7 +817,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f98728824c294545b55b3c89ad731ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _planeDistance: 100
   _deformablePlane: {fileID: 1724292412}
   _inputProviderType: 0
 --- !u!1 &1029661341

@@ -394,7 +394,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh19534
+  m_Name: pb_Mesh21848
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -750,7 +750,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f98728824c294545b55b3c89ad731ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _planeDistance: 100
   _deformablePlane: {fileID: 12673329}
   _inputProviderType: 0
 --- !u!1 &1029661341
@@ -2318,7 +2317,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 4300000, guid: 9b5ffcf51003b894b9660eaf30d370d7, type: 2}
+      objectReference: {fileID: 4300000, guid: 15c3965052388a74f93f6aebd3f00862, type: 2}
     - target: {fileID: 5050395531522152243, guid: cc38f314cc2db9347a9ab5f29ab15686,
         type: 3}
       propertyPath: m_Name
@@ -2328,7 +2327,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 4300000, guid: 9b5ffcf51003b894b9660eaf30d370d7, type: 2}
+      objectReference: {fileID: 4300000, guid: 15c3965052388a74f93f6aebd3f00862, type: 2}
     - target: {fileID: 5050395531522152254, guid: cc38f314cc2db9347a9ab5f29ab15686,
         type: 3}
       propertyPath: m_RootOrder
@@ -2337,6 +2336,11 @@ PrefabInstance:
     - target: {fileID: 5050395531522152254, guid: cc38f314cc2db9347a9ab5f29ab15686,
         type: 3}
       propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5050395531522152254, guid: cc38f314cc2db9347a9ab5f29ab15686,
+        type: 3}
+      propertyPath: m_LocalScale.y
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5050395531522152254, guid: cc38f314cc2db9347a9ab5f29ab15686,
