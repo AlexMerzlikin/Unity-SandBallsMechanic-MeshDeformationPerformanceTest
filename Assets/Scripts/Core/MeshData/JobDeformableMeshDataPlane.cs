@@ -1,5 +1,4 @@
 using Core.JobDeformer;
-using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -84,14 +83,13 @@ namespace Core.MeshData
             outputMesh.SetVertexBufferParams(meshData.vertexCount, _layout);
             var vertexData = meshData.GetVertexData<VertexData>();
             _job = new ProcessMeshDataJob
-            {
-                Point = _positionToDeform,
-                Radius = _radiusOfDeformation,
-                Power = _powerOfDeformation,
-                MeshData = _meshDataArray,
-                VertexData = vertexData,
-                OutputMesh = outputMesh
-            };
+            (
+                outputMesh,
+                vertexData,
+                _radiusOfDeformation,
+                _powerOfDeformation,
+                _positionToDeform
+            );
 
             _jobHandle = _job.Schedule(meshData.vertexCount, _innerloopBatchCount);
         }
