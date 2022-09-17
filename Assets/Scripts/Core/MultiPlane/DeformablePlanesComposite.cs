@@ -5,6 +5,7 @@ namespace Core.MultiPlane
     public class DeformablePlanesComposite : DeformablePlane
     {
         [SerializeField] private DeformablePlane[] _deformablePlanes;
+        [SerializeField] private float _distanceThreshold = 1f;
         private Bounds[] _bounds;
         private Vector3 _positionToDeform;
 
@@ -25,7 +26,7 @@ namespace Core.MultiPlane
                 var deformablePlane = _deformablePlanes[i];
                 var bounds = _bounds[i];
                 var sqrDistance = bounds.SqrDistance(_positionToDeform);
-                if (sqrDistance < 1f)
+                if (sqrDistance < _distanceThreshold)
                 {
                     deformablePlane.Deform(positionToDeform);
                 }
