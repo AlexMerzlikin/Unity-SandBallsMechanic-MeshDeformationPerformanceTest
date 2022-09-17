@@ -63,17 +63,19 @@ namespace Core.MeshData.MeshDataOnCPU
 
         private void ModifyVertexData(NativeArray<VertexData> vertexData)
         {
+            var meshData = _meshDataArray[0];
+            var vertices = new NativeArray<Vector3>(meshData.vertexCount, Allocator.Temp);
+            meshData.GetVertices(vertices);
             for (var i = 0; i < _vertexData.Length; i++)
             {
-                var distance = (_vertexData[i].Position - _positionToDeform).sqrMagnitude;
+                var distance = (vertices[i] - _positionToDeform).sqrMagnitude;
                 var modifier = distance < _radiusOfDeformation ? 1 : 0;
                 var v = new VertexData
                 {
-                    Position = _vertexData[i].Position - Vector3.up * modifier * _powerOfDeformation,
+                    Position = vertices[i] - Vector3.up * modifier * _powerOfDeformation,
                     Normal = _vertexData[i].Normal,
                     Uv = _vertexData[i].Uv
                 };
-                _vertexData[i] = v;
                 vertexData[i] = v;
             }
         }

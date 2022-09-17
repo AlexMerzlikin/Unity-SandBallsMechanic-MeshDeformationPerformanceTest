@@ -81,11 +81,10 @@ namespace Core.MeshData
             var meshData = _meshDataArray[0];
             outputMesh.SetIndexBufferParams(meshData.GetSubMesh(0).indexCount, meshData.indexFormat);
             outputMesh.SetVertexBufferParams(meshData.vertexCount, _layout);
-            var vertexData = meshData.GetVertexData<VertexData>();
             _job = new ProcessMeshDataJob
             (
+                meshData,
                 outputMesh,
-                vertexData,
                 _radiusOfDeformation,
                 _powerOfDeformation,
                 _positionToDeform
@@ -102,7 +101,7 @@ namespace Core.MeshData
             }
 
             _jobHandle.Complete();
-            UpdateMesh(_job.OutputMesh);
+            UpdateMesh(_meshDataArrayOutput[0]);
             _scheduled = false;
             _hasPoint = false;
         }

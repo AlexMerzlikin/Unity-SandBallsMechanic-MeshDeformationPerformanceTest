@@ -11,20 +11,20 @@ namespace Core.MeshData
     {
         private static readonly Vector3 Up = new Vector3(0, 1, 0);
 
-        public Mesh.MeshData OutputMesh;
-        [ReadOnly] private readonly NativeArray<VertexData> _vertexData;
+        [ReadOnly] private readonly Mesh.MeshData _outputData;
+        [ReadOnly] private readonly Mesh.MeshData _vertexData;
         [ReadOnly] private readonly float _radius;
         [ReadOnly] private readonly float _power;
         [ReadOnly] private readonly Vector3 _point;
 
-        public ProcessMeshDataJob(Mesh.MeshData outputMesh,
-            NativeArray<VertexData> vertexData,
+        public ProcessMeshDataJob(Mesh.MeshData vertexData,
+            Mesh.MeshData outputData,
             float radius,
             float power,
             Vector3 point)
         {
-            OutputMesh = outputMesh;
             _vertexData = vertexData;
+            _outputData = outputData;
             _radius = radius;
             _power = power;
             _point = point;
@@ -32,12 +32,12 @@ namespace Core.MeshData
 
         public void Execute(int index)
         {
-            var outputVertices = OutputMesh.GetVertexData<VertexData>();
-            var vertexData = _vertexData[index];
+            var vertexData = _vertexData.GetVertexData<VertexData>()[index];
+            var outputVertexData = _outputData.GetVertexData<VertexData>();
             var position = vertexData.Position;
             var distance = (position - _point).sqrMagnitude;
             var modifier = distance < _radius ? 1 : 0;
-            outputVertices[index] = new VertexData
+            outputVertexData[index] = new VertexData
             {
                 Position = position - Up * modifier * _power,
                 Normal = vertexData.Normal,
